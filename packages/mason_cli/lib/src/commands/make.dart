@@ -58,10 +58,18 @@ class _MakeCommand extends MasonCommand {
     for (final entry in _brick.vars.entries) {
       final variable = entry.key;
       final properties = entry.value;
-      argParser.addOption(
-        variable,
-        help: properties.toHelp(),
-      );
+      if (properties.type == BrickVariableType.array ||
+          properties.type == BrickVariableType.list) {
+        argParser.addMultiOption(
+          variable,
+          help: properties.toHelp(),
+        );
+      } else {
+        argParser.addOption(
+          variable,
+          help: properties.toHelp(),
+        );
+      }
     }
   }
 
