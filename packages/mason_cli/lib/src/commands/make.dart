@@ -123,9 +123,20 @@ class _MakeCommand extends MasonCommand {
         final variable = entry.key;
         final properties = entry.value;
         if (vars.containsKey(variable)) continue;
-        final arg = results[variable] as String?;
+        dynamic arg;
+        if (properties.type == BrickVariableType.array ||
+            properties.type == BrickVariableType.list) {
+          arg = results.multiOption(variable);
+        } else {
+          arg = results.option(variable);
+        }
+
         if (arg != null) {
-          vars.addAll(<String, dynamic>{variable: _maybeDecode(arg)});
+          vars.addAll(
+            <String, dynamic>{
+              variable: arg is String ? _maybeDecode(arg) : arg,
+            },
+          );
         } else {
           final prompt =
               '''${styleBold.wrap(lightGreen.wrap('?'))} ${properties.prompt ?? variable}''';
